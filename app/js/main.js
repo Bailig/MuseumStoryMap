@@ -898,6 +898,8 @@ function initMap(layers) {
 		_map.addLayer(contentLayer);
 		_contentLayers.push(contentLayer);
 	});
+    //contentLayer.graphics[0].attributes.ArtifactID = ArtifactID from the csv
+    //contentLayer.graphics[0].symbol.url = icon image name
 
 	if(!_pointsInOneLayer)
 		_contentLayers.reverse();
