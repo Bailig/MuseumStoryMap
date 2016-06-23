@@ -34,6 +34,7 @@ var FIELDNAME_TAB = ["Tab_Name"];
 var FIELDNAME_LOCATIONID = ["LocationID"];
 var FIELDNAME_TABNAME = ["Group"];
 var FIELDNAME_ARTIFACTID = ["ArtifactID"];
+var FIELDNAME_POINTCOUNT = ["Point_Count"];
 
 var _lutIconSpecs = {
 	tiny:new IconSpecs(22,28,3,8),
@@ -1446,7 +1447,8 @@ function unselect() {
 function SortByNumber(a, b){
   var aNumber = a.attributes.getValueCI(FIELDNAME_NUMBER) || a.attributes.Shortlist_ID;
   var bNumber = b.attributes.getValueCI(FIELDNAME_NUMBER) || b.attributes.Shortlist_ID;
-  return ((aNumber < bNumber) ? -1 : ((aNumber > bNumber) ? 1 : 0));
+  var returnNum = ((aNumber < bNumber) ? -1 : ((aNumber > bNumber) ? 1 : 0));
+  return returnNum;
 }
 
 function createLayerDefinition(fields){
@@ -1576,14 +1578,21 @@ function activateLayer(layer) {
 		img = $('<img src="'+value.attributes.getValueCI(FIELDNAME_IMAGEURL)+'"alt>');
 		mobileImg = $('<div style="height: 75px; margin-bottom: 8px;"><img src="'+value.attributes.getValueCI(FIELDNAME_IMAGEURL)+'"></div>');
 		footer = $('<div class="footer"></div>');
-		if(value.attributes.getValueCI(FIELDNAME_NUMBER) < 100){
-			num = $('<div class="num" style="background-color:'+_layerCurrent.color+'">'+value.attributes.getValueCI(FIELDNAME_NUMBER)+'</div>');
+/*--------------------------------------------------------------------------------
+---------------------------------------------------------------------------*/
+/*
+icon number in the side bar customized here -- start
+FIELDNAME_ID were changed to FIELDNAME_POINTCOUNT
+*/
+		if(value.attributes.getValueCI(FIELDNAME_POINTCOUNT) < 100){
+			num = $('<div class="num" style="background-color:'+_layerCurrent.color+'">'+value.attributes.getValueCI(FIELDNAME_POINTCOUNT)+'</div>');
 			title = $('<div class="blurb">'+value.attributes.getValueCI(FIELDNAME_TITLE)+'</div>');
 		}
 		else{
-			num = $('<div class="num longNum" style="background-color:'+_layerCurrent.color+'">'+value.attributes.getValueCI(FIELDNAME_NUMBER)+'</div>');
+			num = $('<div class="num longNum" style="background-color:'+_layerCurrent.color+'">'+value.attributes.getValueCI(FIELDNAME_POINTCOUNT)+'</div>');
 			title = $('<div class="blurb longNumBlurb">'+value.attributes.getValueCI(FIELDNAME_TITLE)+'</div>');
 		}
+
 		$(footer).append(num);
 		$(footer).append(title);
 		$(tile).append(footer);
@@ -1593,7 +1602,10 @@ function activateLayer(layer) {
 		$("#myList").append(tile);
 		$('#mobileList').append(mobileTile);
 	});
-
+    
+/*icon number in the side bar customized here -- end*/
+/*--------------------------------------------------------------------------------
+---------------------------------------------------------------------------*/
 	// event handlers have to be re-assigned every time you load the list...
 	$("ul.tilelist li").mouseover(tile_onMouseOver);
 	$("ul.tilelist li").mouseout(tile_onMouseOut);
@@ -1636,7 +1648,11 @@ function refreshList() {
 			$('.noFeature').css('display', 'none');
 	}, 100);
 }
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*
+icon number in the map changed here -- start
+FIELDNAME_NUMBER were changed to FIELDNAME_POINTCOUNT
+*/
 function buildLayer(arr,iconDir,root) {
 	var layer = new esri.layers.GraphicsLayer();
 	var pt;
@@ -1644,11 +1660,14 @@ function buildLayer(arr,iconDir,root) {
 	var spec = _lutIconSpecs["tiny"];
 	$.each(arr,function(index,value){
 		pt = new esri.geometry.Point(value.geometry.x,value.geometry.y,value.geometry.spatialReference);
-		sym = createPictureMarkerSymbol("resources/images/icons/"+iconDir+"/"+root+value.attributes.getValueCI(FIELDNAME_NUMBER)+".png", _lutIconSpecs["tiny"]);
+		sym = createPictureMarkerSymbol("resources/images/icons/"+iconDir+"/"+root+value.attributes.getValueCI(FIELDNAME_POINTCOUNT)+".png", _lutIconSpecs["tiny"]);
 		layer.add(new esri.Graphic(pt,sym,value.attributes));
 	});
 	return layer;
 }
+
+/*icon number in the map changed here -- end*/
+/*----------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 function getValueCI(fields) {
 	// this function provides a uniform method for reading an
