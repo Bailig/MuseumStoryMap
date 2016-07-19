@@ -2019,55 +2019,110 @@ function buildMobileSlideView(featureNumber){
 
 		if(!atts.getValueCI)
 			atts.getValueCI = getValueCI;
+/*---------------------------------------------------------------------------------*/
+// mobile data customization start-------------------------------------------------
+        var artifactID = atts.getValueCI(FIELDNAME_ARTIFACTID);
+        var LocationID = atts.getValueCI(FIELDNAME_LOCATIONID);
+        var tabName = atts.getValueCI(FIELDNAME_TABNAME);
+        
 
-		var title =  atts.getValueCI(FIELDNAME_TITLE);
+		var num = $('<div class="mobileFeatureNum" style="background-color:'+_layerCurrent.color+'">'+ atts.getValueCI(FIELDNAME_POINTCOUNT)+'</div>');
 
-		var shortDesc = atts.getValueCI(FIELDNAME_SHORTDESC);
-		var picture = atts.getValueCI(FIELDNAME_IMAGEURL);
-		var website = prependURLHTTP(atts.getValueCI(FIELDNAME_WEBSITE));
-
-		var num = $('<div class="mobileFeatureNum" style="background-color:'+_layerCurrent.color+'">'+ atts.getValueCI(FIELDNAME_NUMBER)+'</div>');
 
 		var mobileContentDiv = $("<div'></div");
-		$(mobileContentDiv).append(num);
-		if(title){
-			$(mobileContentDiv).append($("<div class='mobileFeatureTitle'></div>").html(title));
-		}
-		$(mobileContentDiv).append("<hr style='margin-left: 20px; margin-right: 20px;'>");
+        $(mobileContentDiv).append(num);
+        $.getJSON('app/js/detailInfo.json', function(jsonObject) {
+            $.each(jsonObject, function(objectName, dataArray) {
+                $.each(dataArray, function(key, value){
+                    if(artifactID === value.ArtifactID){
+                        var template = ""+
+                            '<div class="mobileFeatureTitle">{{Name}}</div>'+
+                            '<div class="mobilePictureDiv"><img src="{{Pic_URL}}"></div>';
+                        if (value.BeginDate !== "0" && value.EndDate !== "0"){
+                            template += "<div class=\"mobileFeatureDesc\"><b>{{BeginDate}}</b> to <b>{{EndDate}}</b></div><p></p>";
+                        }
+                        if (value.BeginDate!== "0" && value.EndDate === "0"){
+                            template += "<div class=\"mobileFeatureDesc\"><b>{{BeginDate}}</b></div><p></p>";
+                        }
+                        if (value.Short_Desc !== ""){
+                            template += "<div class=\"mobileFeatureDesc\"><b>Description:</b> {{Short_Desc}}</div><p></p>";
+                        }
+                        if (value.ArtifactFinish!== ""){
+                            template += "<div class=\"mobileFeatureDesc\"><b>Artifact Finish:</b> {{ArtifactFinish}}</div><p></p>";
+                        }
+                        if (value.Manufacturer !== ""){
+                            template += "<div class=\"mobileFeatureDesc\"><b>Manufacturer:</b> {{Manufacturer}}</div><p></p>";
+                        }
+                        if (value.Height !=="" || value.Length !=="" || value.Width !==""){
+                        template += "<div class=\"mobileFeatureDesc\">"
+                        }
+                        if (value.Height !==""){
+                            template += "Height: {{Height}}";
+                        }
+                        if (value.Height !=="" && value.Length !==""){
+                            template += ", Length: {{Length}}"
+                        }
+                        if (value.Height ==="" && value.Length !==""){
+                            template += "Length: {{Length}}"
+                        }
+                        if ((value.Height ==="" && value.Length ==="") && value.Width !==""){
+                            template += "Width: {{Width}}"
+                        }
+                        if ((value.Height !=="" || value.Length !=="") && value.Width !==""){
+                            template += ", Width: {{Width}}"
+                        }
+                        template += '<hr style="margin-bottom: 3em">';;
+                        var html = Mustache.to_html(template, value);                $(mobileContentDiv).append(html);
+                    }// if artifactID
+                });// each value
+                $.each(dataArray, function(key, value){
+                    if( artifactID !== value.ArtifactID && LocationID === value.LocationID && tabName === value.Tab_Name){
+                        var template = ""+
+                            '<div class="mobileFeatureTitle">{{Name}}</div>'+
+                            '<div class="mobilePictureDiv"><img src="{{Pic_URL}}"></div>';
+                            
 
-		if (shortDesc) {
-			$(mobileContentDiv).append($("<div class='mobileFeatureSubtitle'></div>").html(shortDesc));
-		}
-		if (picture) {
-			var mobilePDiv = $("<div></div>").addClass("mobilePictureDiv");
-			$(mobilePDiv).append($(new Image()).attr("src", picture));
-
-			$(mobileContentDiv).append(mobilePDiv);
-		}
-
-		if (!DETAILS_PANEL) {
-			var desc1 = atts.getValueCI(FIELDNAME_DESC1);
-			if (desc1) {
-				$(mobileContentDiv).append($("<div class='mobileFeatureDesc'></div>").html(desc1));
-			}
-
-			if (website) {
-				$(mobileContentDiv).append($('<div class="mobileFeatureDesc"><a href="'+website+'" target="_blank">Website</a></div>').css("padding-top", 10));
-			}
-
-		} else {
-			var descFields = [FIELDNAME_DESC1, FIELDNAME_DESC2, FIELDNAME_DESC3, FIELDNAME_DESC4, FIELDNAME_DESC5];
-			var value;
-			$.each(descFields, function(index, field){
-				value = atts.getValueCI(field);
-				if (value) {
-					$(mobileContentDiv).append('<div class="mobileFeatureDesc">'+value+'</div>');
-					if ($(mobileContentDiv).children().length > 0){
-						$(mobileContentDiv).append('<br>');
-					}
-				}
-			});
-			$(mobileContentDiv).append("<hr style='margin-left: 20px; margin-right: 20px;'>");
+                        if (value.BeginDate !== "0" && value.EndDate !== "0"){
+                            template += "<div class=\"mobileFeatureDesc\"><b>{{BeginDate}}</b> to <b>{{EndDate}}</b></div><p></p>";
+                        }
+                        if (value.BeginDate!== "0" && value.EndDate === "0"){
+                            template += "<div class=\"mobileFeatureDesc\"><b>{{BeginDate}}</b></div><p></p>";
+                        }
+                        if (value.Short_Desc !== ""){
+                            template += "<div class=\"mobileFeatureDesc\"><b>Description:</b> {{Short_Desc}}</div><p></p>";
+                        }
+                        if (value.ArtifactFinish!== ""){
+                            template += "<div class=\"mobileFeatureDesc\"><b>Artifact Finish:</b> {{ArtifactFinish}}</div><p></p>";
+                        }
+                        if (value.Manufacturer !== ""){
+                            template += "<div class=\"mobileFeatureDesc\"><b>Manufacturer:</b> {{Manufacturer}}</div><p></p>";
+                        }
+                        if (value.Height !=="" || value.Length !=="" || value.Width !==""){
+                        template += "<div class=\"mobileFeatureDesc\">"
+                        }
+                        if (value.Height !==""){
+                            template += "Height: {{Height}}";
+                        }
+                        if (value.Height !=="" && value.Length !==""){
+                            template += ", Length: {{Length}}"
+                        }
+                        if (value.Height ==="" && value.Length !==""){
+                            template += "Length: {{Length}}"
+                        }
+                        if ((value.Height ==="" && value.Length ==="") && value.Width !==""){
+                            template += "Width: {{Width}}"
+                        }
+                        if ((value.Height !=="" || value.Length !=="") && value.Width !==""){
+                            template += ", Width: {{Width}}"
+                        }
+                        template += '<hr style="margin-bottom: 3em">';
+                        var html = Mustache.to_html(template, value);                $(mobileContentDiv).append(html);  
+                    }// if locationID && tab name
+                });// each value
+            });// each data
+        }) //getJSON  
+        .done(function(){
+            
 			var address = atts.getValueCI(FIELDNAME_ADDRESS);
 			if (address) {
 				$(mobileContentDiv).append($('<div class="mobileFeatureAddress">'+address+'</div>'));
@@ -2083,27 +2138,34 @@ function buildMobileSlideView(featureNumber){
 				$(mobileContentDiv).append('<div class="mobileFeatureAddress"><a href="'+website+'" target="_blank">Website</a></div>');
 			}
 			$(mobileContentDiv).append('<div style="margin-bottom: 20px;"></div>');
-		}
+		
 
-		var featureSlide = _mobileFeatureSwiper.createSlide(mobileContentDiv.html());
-		$(featureSlide).attr('data-number', atts.getValueCI(FIELDNAME_NUMBER));
-		$(featureSlide).css('overflowY', 'auto');
-		featureSlide.append();
-	});
+            var featureSlide = _mobileFeatureSwiper.createSlide(mobileContentDiv.html());
+            $(featureSlide).attr('data-number', atts.getValueCI(FIELDNAME_LOCATIONID));
+            $(featureSlide).css('overflowY', 'auto');
+            featureSlide.append();
+            
+            var selectedSlideIndex = null;
 
-	 var selectedSlideIndex = null;
+         $.each(_mobileFeatureSwiper.slides, function(index, slide){
+             if (parseInt($(slide).data('number')) == _selected.attributes.getValueCI(FIELDNAME_LOCATIONID))
+                selectedSlideIndex = index;
+         });//each(_mobileFeatureSwiper.slides
+         _mobileFeatureSwiper.swipeTo(selectedSlideIndex);
+         $('.swiper-slide-active').scrollTop(0);
+         $('#mobileFeature').css('visibility', 'visible');
+         $('#returnIcon').css('display', 'block');
+         $('#returnHiddenBar').css('display', 'block');
+         $('#centerMapIconContainer').css('display', 'block');
+            });
+        
+        }); //JSON done
 
-	 $.each(_mobileFeatureSwiper.slides, function(index, slide){
-		 if (parseInt($(slide).data('number')) == _selected.attributes.getValueCI(FIELDNAME_NUMBER))
-		 	selectedSlideIndex = index;
-	 });
-	 _mobileFeatureSwiper.swipeTo(selectedSlideIndex);
-	 $('.swiper-slide-active').scrollTop(0);
-	 $('#mobileFeature').css('visibility', 'visible');
-	 $('#returnIcon').css('display', 'block');
-	 $('#returnHiddenBar').css('display', 'block');
-	 $('#centerMapIconContainer').css('display', 'block');
 }
+// moble customization end---------------------------------------------------------
+/*---------------------------------------------------------------------------------*/
+
+
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 // custom functions for slideshow - start
